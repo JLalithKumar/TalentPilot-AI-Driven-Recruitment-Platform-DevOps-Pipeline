@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: talentpilot
+      POSTGRES_PASSWORD: talentpassword
+      POSTGRES_DB: talentpilotdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - talentpilot-net
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    networks:
+      - talentpilot-net
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "8000:8000"
+    networks:
+      - talentpilot-net
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/talentpilotdb
+      - SPRING_DATASOURCE_USERNAME=talentpilot
+      - SPRING_DATASOURCE_PASSWORD=talentpassword
+      - AWS_S3_ENDPOINT=http://minio:9000
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - postgres
+      - minio
+      - ai-service
+    networks:
+      - talentpilot-net
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - talentpilot-net
+
+volumes:
+  pgdata:
+  miniodata:
+
+networks:
+  talentpilot-net:
