@@ -6,15 +6,13 @@ import { Input } from '../../components/ui/Input';
 import { Briefcase, Plus, Users, Building2, Globe, Pencil, Check, X } from 'lucide-react';
 import { RootState } from '../../store';
 
-const API_BASE = 'http://localhost:8081';
-
 const useCompany = (token: string | null) => {
   const [company, setCompany] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
     if (!token) return;
-    fetch(`${API_BASE}/api/v1/company/my`, {
+    fetch(`/api/v1/company/my`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.ok ? r.json() : null)
@@ -23,7 +21,7 @@ const useCompany = (token: string | null) => {
   }, [token]);
 
   const updateCompany = async (data: any) => {
-    const res = await fetch(`${API_BASE}/api/v1/company/my`, {
+    const res = await fetch(`/api/v1/company/my`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(data)

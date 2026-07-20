@@ -22,22 +22,29 @@ public class CompanyController {
     @GetMapping("/my")
     public ResponseEntity<?> getMyCompany(Authentication authentication) {
         User recruiter = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        return companyRepository.findByRecruiterId(recruiter.getId())
-                .map(c -> ResponseEntity.ok(Map.of(
-                        "id", c.getId(),
-                        "name", c.getName(),
-                        "description", c.getDescription() != null ? c.getDescription() : "",
-                        "website", c.getWebsite() != null ? c.getWebsite() : "",
-                        "recruiterName", recruiter.getFirstName() + " " + recruiter.getLastName(),
-                        "recruiterEmail", recruiter.getEmail()
-                )))
-                .orElse(ResponseEntity.notFound().build());
+        Company company = companyRepository.findByRecruiterId(recruiter.getId())
+                .orElseGet(() -> companyRepository.save(Company.builder()
+                        .name(recruiter.getFirstName() + "'s Company")
+                        .recruiter(recruiter)
+                        .build()));
+        return ResponseEntity.ok(Map.of(
+                "id", company.getId(),
+                "name", company.getName(),
+                "description", company.getDescription() != null ? company.getDescription() : "",
+                "website", company.getWebsite() != null ? company.getWebsite() : "",
+                "recruiterName", recruiter.getFirstName() + " " + recruiter.getLastName(),
+                "recruiterEmail", recruiter.getEmail()
+        ));
     }
 
     @PutMapping("/my")
     public ResponseEntity<?> updateMyCompany(@RequestBody Map<String, String> body, Authentication authentication) {
         User recruiter = userRepository.findByEmail(authentication.getName()).orElseThrow();
-        Company company = companyRepository.findByRecruiterId(recruiter.getId()).orElseThrow();
+        Company company = companyRepository.findByRecruiterId(recruiter.getId())
+                .orElseGet(() -> Company.builder()
+                        .name(recruiter.getFirstName() + "'s Company")
+                        .recruiter(recruiter)
+                        .build());
 
         if (body.containsKey("name") && !body.get("name").isBlank()) {
             company.setName(body.get("name"));
@@ -49,7 +56,13 @@ public class CompanyController {
             company.setWebsite(body.get("website"));
         }
 
-        companyRepository.save(company);
-        return ResponseEntity.ok(Map.of("message", "Company updated successfully"));
+        Company saved = companyRepository.save(company);
+        return ResponseEntity.ok(Map.of(
+                "message", "Company updated successfully",
+                "id", saved.getId(),
+                "name", saved.getName(),
+                "description", saved.getDescription() != null ? saved.getDescription() : "",
+                "website", saved.getWebsite() != null ? saved.getWebsite() : ""
+        ));
     }
 }

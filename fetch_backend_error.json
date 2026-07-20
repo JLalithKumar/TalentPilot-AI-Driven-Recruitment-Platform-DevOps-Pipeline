@@ -1,0 +1,9 @@
+{
+    "InstanceIds": ["i-0f8ade6523273cdfd"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "docker logs backend 2>&1 | grep -C 10 -i 'Exception' | tail -n 40"
+        ]
+    }
+}
