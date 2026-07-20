@@ -1,9 +1,0 @@
-{
-    "InstanceIds": ["i-0f8ade6523273cdfd"],
-    "DocumentName": "AWS-RunShellScript",
-    "Parameters": {
-        "commands": [
-            "curl -i -X POST http://localhost:8081/api/v1/auth/register -H 'Content-Type: application/json' -d '{\"firstName\":\"John\",\"lastName\":\"Doe\",\"email\":\"user1@example.com\",\"password\":\"Password123!\",\"role\":\"CANDIDATE\"}'"
-        ]
-    }
-}
