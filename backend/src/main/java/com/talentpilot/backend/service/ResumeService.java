@@ -36,7 +36,11 @@ public class ResumeService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
                 
         CandidateProfile profile = candidateProfileRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseGet(() -> {
+                    CandidateProfile newProfile = new CandidateProfile();
+                    newProfile.setUser(user);
+                    return candidateProfileRepository.save(newProfile);
+                });
 
         // 1. Upload to S3
         String key = s3Service.uploadFile(file);
@@ -72,5 +76,16 @@ public class ResumeService {
         }
 
         return candidateProfileRepository.save(profile);
+    }
+
+    public CandidateProfile getProfile(String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return candidateProfileRepository.findByUserId(user.getId())
+                .orElseGet(() -> {
+                    CandidateProfile newProfile = new CandidateProfile();
+                    newProfile.setUser(user);
+                    return candidateProfileRepository.save(newProfile);
+                });
     }
 }

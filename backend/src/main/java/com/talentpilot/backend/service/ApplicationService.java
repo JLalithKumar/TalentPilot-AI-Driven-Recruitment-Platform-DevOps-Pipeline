@@ -10,6 +10,7 @@ import com.talentpilot.backend.repository.ApplicationRepository;
 import com.talentpilot.backend.repository.CandidateProfileRepository;
 import com.talentpilot.backend.repository.JobRepository;
 import com.talentpilot.backend.repository.UserRepository;
+import com.talentpilot.backend.util.MatchScoreUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class ApplicationService {
                 .job(job)
                 .candidateProfile(profile)
                 .status(ApplicationStatus.APPLIED)
-                .matchScore(calculateMatchScore(job, profile)) // Simple rule-based matching
+                .matchScore(MatchScoreUtil.calculate(job, profile)) // Dynamic matching logic
                 .build();
         
         application = applicationRepository.save(application);
@@ -75,31 +76,35 @@ public class ApplicationService {
         return mapToDto(application);
     }
 
-    private Double calculateMatchScore(Job job, CandidateProfile profile) {
-        // Simplified mock logic: Check overlap of skills in job requirements vs parsed skills
-        if (profile.getParsedSkills() == null || job.getRequirements() == null || job.getRequirements().isEmpty()) {
-            return 0.0;
-        }
-        
-        String[] required = job.getRequirements().toLowerCase().split(",");
-        String candidateSkills = profile.getParsedSkills().toLowerCase();
-        
-        int matches = 0;
-        for (String req : required) {
-            if (candidateSkills.contains(req.trim())) {
-                matches++;
-            }
-        }
-        return (double) matches / required.length * 100.0;
-    }
-
     private ApplicationDto mapToDto(Application app) {
         ApplicationDto dto = new ApplicationDto();
         dto.setId(app.getId());
         dto.setJobId(app.getJob().getId());
         dto.setCandidateProfileId(app.getCandidateProfile().getId());
         dto.setStatus(app.getStatus());
-        dto.setMatchScore(app.getMatchScore());
+        
+        Job j = app.getJob();
+        CandidateProfile cp = app.getCandidateProfile();
+        Double calculatedScore = MatchScoreUtil.calculate(j, cp);
+        
+        System.out.println("=== DIAGNOSTIC MATCH SCORE ===");
+        System.out.println("Job ID: " + j.getId());
+        System.out.println("Job Requirements: " + j.getRequirements());
+        System.out.println("Job Description: " + j.getDescription());
+        System.out.println("Candidate ID: " + cp.getId());
+        System.out.println("Candidate Parsed Skills: " + cp.getParsedSkills());
+        System.out.println("Calculated Score: " + calculatedScore);
+        System.out.println("==============================");
+        
+        dto.setMatchScore(calculatedScore);
+        dto.setAppliedAt(app.getAppliedAt());
+        
+        User candidate = app.getCandidateProfile().getUser();
+        if (candidate != null) {
+            dto.setCandidateFirstName(candidate.getFirstName());
+            dto.setCandidateLastName(candidate.getLastName());
+            dto.setCandidateEmail(candidate.getEmail());
+        }
         return dto;
     }
 }

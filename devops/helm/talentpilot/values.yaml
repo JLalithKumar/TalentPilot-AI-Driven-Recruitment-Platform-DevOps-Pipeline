@@ -1,0 +1,114 @@
+# ─────────────────────────────────────────────────────────────
+# TalentPilot Helm values.yaml — override any of these values
+# when installing: helm install talentpilot ./devops/helm/talentpilot -f my-values.yaml
+# ─────────────────────────────────────────────────────────────
+
+global:
+  namespace: talentpilot-prod
+  imageRegistry: "docker.io"
+  dockerhubUsername: "YOUR_DOCKERHUB_USERNAME"
+
+# ── Backend ──────────────────────────────────────────────────
+backend:
+  image:
+    repository: "talentpilot-backend"
+    tag: "latest"
+    pullPolicy: Always
+  replicas: 2
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    targetCPUUtilizationPercentage: 70
+  service:
+    port: 8080
+
+# ── Frontend ─────────────────────────────────────────────────
+frontend:
+  image:
+    repository: "talentpilot-frontend"
+    tag: "latest"
+    pullPolicy: Always
+  replicas: 2
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+  service:
+    port: 80
+
+# ── AI Service ───────────────────────────────────────────────
+aiService:
+  image:
+    repository: "talentpilot-ai-service"
+    tag: "latest"
+    pullPolicy: Always
+  replicas: 1
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "800m"
+      memory: "512Mi"
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 75
+  service:
+    port: 8000
+
+# ── PostgreSQL ───────────────────────────────────────────────
+postgres:
+  enabled: true   # Set to false if using AWS RDS
+  image: "postgres:15-alpine"
+  storage: "5Gi"
+  credentials:
+    user: "talentpilot"
+    password: "talentpassword"    # Override via --set or secrets in production
+    database: "talentpilotdb"
+
+# ── MinIO (S3-compatible) ────────────────────────────────────
+minio:
+  enabled: true   # Set to false if using AWS S3
+  image: "minio/minio:latest"
+  storage: "10Gi"
+  credentials:
+    rootUser: "admin"
+    rootPassword: "password123"   # Override in production
+  bucket: "resumes"
+
+# ── Ingress ──────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  host: "talentpilot.local"   # Override with your real domain
+  tls:
+    enabled: false
+    secretName: "talentpilot-tls"
+  annotations:
+    nginx.ingress.kubernetes.io/limit-rps: "20"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+# ── Secrets ──────────────────────────────────────────────────
+secrets:
+  jwtSecret: "talentpilot_super_secret_key_change_me_in_prod"
+
+# ── Monitoring (Prometheus/Grafana) ──────────────────────────
+monitoring:
+  enabled: true
+  prometheus:
+    scrapeInterval: "15s"
+  grafana:
+    adminPassword: "admin"    # Change in production

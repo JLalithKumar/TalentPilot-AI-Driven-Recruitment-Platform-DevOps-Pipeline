@@ -1,0 +1,14 @@
+apiVersion: v2
+name: talentpilot
+description: TalentPilot — AI-powered recruitment platform Helm chart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - talentpilot
+  - recruitment
+  - ai
+  - devops
+home: https://github.com/your-org/talentpilot
+maintainers:
+  - name: TalentPilot Team

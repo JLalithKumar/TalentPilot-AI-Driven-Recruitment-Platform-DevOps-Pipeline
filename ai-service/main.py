@@ -28,15 +28,24 @@ async def parse_resume(file: UploadFile = File(...)):
             for page in doc:
                 text += page.get_text()
                 
-        # Basic parsing logic (Placeholder for actual NLP models)
-        skills_keywords = ["java", "python", "react", "spring boot", "docker", "kubernetes", "aws", "sql", "javascript", "typescript"]
+        # Basic parsing logic with expanded keyword dictionary for accurate matches
+        skills_keywords = [
+            "java", "spring boot", "springboot", "spring", "node.js", "nodejs", "express", "python", "django", "flask", "fastapi", "c++", "c#", ".net", "dotnet", "go", "golang", "ruby", "rails", "php", "laravel", "rust",
+            "react", "angular", "vue", "javascript", "typescript", "html", "css", "bootstrap", "tailwind", "sass",
+            "sql", "mysql", "postgresql", "postgres", "mongodb", "redis", "elasticsearch", "oracle",
+            "docker", "kubernetes", "k8s", "aws", "gcp", "azure", "jenkins", "terraform", "ansible", "git", "github", "gitlab", "ci/cd", "cicd", "devops", "linux", "bash", "shell", "prometheus", "grafana", "nginx", "apache"
+        ]
         extracted_skills = []
         text_lower = text.lower()
         
         for skill in skills_keywords:
-            if re.search(r'\b' + re.escape(skill) + r'\b', text_lower):
+            pattern = r'\b' + re.escape(skill) + r'\b'
+            if skill in ["c++", "c#", ".net"]:
+                # Custom boundary matching for special char skills
+                if skill in text_lower:
+                    extracted_skills.append(skill)
+            elif re.search(pattern, text_lower):
                 extracted_skills.append(skill)
-                
         return {
             "status": "success",
             "skills": ", ".join(extracted_skills),

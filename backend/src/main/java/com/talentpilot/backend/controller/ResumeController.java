@@ -26,4 +26,9 @@ public class ResumeController {
             return ResponseEntity.internalServerError().body("Failed to upload file: " + e.getMessage());
         }
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+        return ResponseEntity.ok(resumeService.getProfile(authentication.getName()));
+    }
 }

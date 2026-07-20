@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: talentpilot-prod
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: talentpilot-secrets
+  namespace: talentpilot-prod
+type: Opaque
+stringData:
+  POSTGRES_USER: talentpilot
+  POSTGRES_PASSWORD: SuperSecretPass123!
+  POSTGRES_DB: talentpilotdb
+  JWT_SECRET: "talentpilot_super_secret_key_change_me_in_prod"

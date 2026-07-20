@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { setCredentials } from '../../store/slices/authSlice';
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, Briefcase, Users } from 'lucide-react';
 import classNames from 'classnames';
 
 export const Register = () => {
+  const [searchParams] = useSearchParams();
+  const roleFromUrl = searchParams.get('role');
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    role: 'CANDIDATE'
+    role: (roleFromUrl === 'RECRUITER' || roleFromUrl === 'CANDIDATE') ? roleFromUrl : 'CANDIDATE',
+    companyName: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Sync role if URL param changes after mount
+  useEffect(() => {
+    if (roleFromUrl === 'RECRUITER' || roleFromUrl === 'CANDIDATE') {
+      setFormData(prev => ({ ...prev, role: roleFromUrl }));
+    }
+  }, [roleFromUrl]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -31,7 +42,8 @@ export const Register = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/register', {
+      const getApiHost = () => typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+      const response = await fetch(`http://${getApiHost()}:8081/api/v1/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -52,18 +64,37 @@ export const Register = () => {
     }
   };
 
+  const isRecruiter = formData.role === 'RECRUITER';
+
   return (
-    <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center">
-      <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-0"></div>
+    <div className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Background */}
+      <div className="absolute inset-0 bg-background z-0">
+        <div className={classNames(
+          "absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-30 transition-all duration-700",
+          isRecruiter ? "bg-primary/30" : "bg-accent/30"
+        )}></div>
+        <div className={classNames(
+          "absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl opacity-30 transition-all duration-700",
+          isRecruiter ? "bg-accent/20" : "bg-primary/20"
+        )}></div>
+      </div>
       
       <div className="glass-panel max-w-md w-full p-8 z-10 animate-fade-in relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent via-primary to-accent"></div>
+        {/* Top accent bar — color changes by role */}
+        <div className={classNames(
+          "absolute top-0 left-0 w-full h-1 bg-gradient-to-r transition-all duration-500",
+          isRecruiter ? "from-primary via-accent to-primary" : "from-accent via-indigo-400 to-accent"
+        )}></div>
         
         <div className="flex flex-col items-center mb-8">
-          <BrainCircuit className="h-12 w-12 text-accent mb-4" />
+          <BrainCircuit className={classNames(
+            "h-12 w-12 mb-4 transition-colors duration-300",
+            isRecruiter ? "text-primary" : "text-accent"
+          )} />
           <h2 className="text-3xl font-bold text-center text-white">Create Account</h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Join TalentPilot to power up your recruitment
+            {isRecruiter ? 'Start building your dream team' : 'Find your perfect next role'}
           </p>
         </div>
 
@@ -75,21 +106,32 @@ export const Register = () => {
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           
-          <div className="flex gap-4 mb-4">
+          {/* Role Toggle */}
+          <div className="flex gap-3 mb-6 p-1 bg-surfaceLight rounded-xl border border-white/5">
             <button
               type="button"
               onClick={() => setFormData({ ...formData, role: 'CANDIDATE' })}
-              className={classNames("flex-1 py-2 text-sm font-medium rounded-lg border transition-all duration-200", 
-                formData.role === 'CANDIDATE' ? "bg-primary/20 border-primary text-primary" : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500")}
+              className={classNames(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
+                formData.role === 'CANDIDATE'
+                  ? "bg-accent/20 border border-accent text-accent shadow-lg"
+                  : "text-gray-500 hover:text-gray-300 border border-transparent"
+              )}
             >
+              <Users className="h-4 w-4" />
               Candidate
             </button>
             <button
               type="button"
               onClick={() => setFormData({ ...formData, role: 'RECRUITER' })}
-              className={classNames("flex-1 py-2 text-sm font-medium rounded-lg border transition-all duration-200", 
-                formData.role === 'RECRUITER' ? "bg-accent/20 border-accent text-accent" : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500")}
+              className={classNames(
+                "flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium rounded-lg transition-all duration-200",
+                formData.role === 'RECRUITER'
+                  ? "bg-primary/20 border border-primary text-primary shadow-lg"
+                  : "text-gray-500 hover:text-gray-300 border border-transparent"
+              )}
             >
+              <Briefcase className="h-4 w-4" />
               Recruiter
             </button>
           </div>
@@ -101,9 +143,17 @@ export const Register = () => {
           
           <Input id="email" type="email" label="Email address" required value={formData.email} onChange={handleChange} placeholder="you@example.com" />
           <Input id="password" type="password" label="Password" required minLength={6} value={formData.password} onChange={handleChange} placeholder="••••••••" />
+          
+          {formData.role === 'RECRUITER' && (
+            <Input id="companyName" type="text" label="Company Name" required value={formData.companyName} onChange={handleChange} placeholder="e.g. Acme Corp" />
+          )}
 
-          <Button type="submit" className="w-full mt-6" isLoading={isLoading}>
-            Create Account
+          <Button
+            type="submit"
+            className={classNames("w-full mt-6 transition-all", isRecruiter ? "" : "bg-accent hover:bg-accent/90")}
+            isLoading={isLoading}
+          >
+            {isRecruiter ? 'Create Recruiter Account' : 'Create Candidate Account'}
           </Button>
         </form>
         

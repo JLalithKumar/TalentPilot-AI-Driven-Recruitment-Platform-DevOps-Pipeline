@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: talentpilot-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/YOUR_GITHUB_USERNAME/talentpilot.git' # Replace with your GitHub repo URL
+    targetRevision: HEAD
+    path: devops/k8s
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: talentpilot-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: talentpilot-helm-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/YOUR_GITHUB_USERNAME/talentpilot.git'
+    targetRevision: HEAD
+    path: devops/helm/talentpilot
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: talentpilot-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

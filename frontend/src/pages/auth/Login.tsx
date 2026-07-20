@@ -21,7 +21,8 @@ export const Login = () => {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+      const getApiHost = () => typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+      const response = await fetch(`http://${getApiHost()}:8081/api/v1/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

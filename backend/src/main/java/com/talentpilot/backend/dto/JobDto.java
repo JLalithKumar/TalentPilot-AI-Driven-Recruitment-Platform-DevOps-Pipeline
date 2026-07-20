@@ -10,5 +10,7 @@ public class JobDto {
     private String location;
     private String requirements;
     private Long companyId;
+    private String companyName;
     private boolean isActive;
+    private Double matchScore;
 }

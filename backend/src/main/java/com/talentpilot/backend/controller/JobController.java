@@ -4,6 +4,7 @@ import com.talentpilot.backend.dto.JobDto;
 import com.talentpilot.backend.service.JobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,9 +20,14 @@ public class JobController {
         return ResponseEntity.ok(jobService.createJob(dto, companyId));
     }
 
+    @PostMapping
+    public ResponseEntity<JobDto> createJobAuto(@RequestBody JobDto dto, Authentication authentication) {
+        return ResponseEntity.ok(jobService.createJobAutoCompany(dto, authentication.getName()));
+    }
+
     @GetMapping
-    public ResponseEntity<List<JobDto>> getAllJobs() {
-        return ResponseEntity.ok(jobService.getAllActiveJobs());
+    public ResponseEntity<List<JobDto>> getAllJobs(Authentication authentication) {
+        return ResponseEntity.ok(jobService.getAllActiveJobs(authentication.getName()));
     }
 
     @GetMapping("/company/{companyId}")

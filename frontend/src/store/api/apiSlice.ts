@@ -4,7 +4,7 @@ import { RootState } from '../index';
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8080/api/v1',
+    baseUrl: `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:8081/api/v1`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
@@ -29,6 +29,10 @@ export const apiSlice = createApi({
         body: formData,
       }),
       invalidatesTags: ['Profile']
+    }),
+    getProfile: builder.query<any, void>({
+      query: () => '/resumes/profile',
+      providesTags: ['Profile']
     }),
     
     // Applications
@@ -70,6 +74,7 @@ export const apiSlice = createApi({
 export const { 
   useGetJobsQuery, 
   useUploadResumeMutation, 
+  useGetProfileQuery,
   useApplyForJobMutation, 
   useGetMyApplicationsQuery,
   useCreateJobMutation,

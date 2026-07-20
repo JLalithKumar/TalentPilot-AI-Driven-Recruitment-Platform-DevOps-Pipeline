@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  ai-service:
+    image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-ai-service:latest
+    container_name: ai-service
+    restart: always
+    ports:
+      - "8000:8000"
+
+  backend:
+    image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-backend:latest
+    container_name: backend
+    restart: always
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://talentpilot-postgres.c6bwcwwsy46w.us-east-1.rds.amazonaws.com:5432/talentpilotdb
+      - SPRING_DATASOURCE_USERNAME=talentpilot
+      - SPRING_DATASOURCE_PASSWORD=SuperSecretPass123!
+      - S3_BUCKET=talentpilot-resumes-prod
+      - AWS_REGION=us-east-1
+      - AI_SERVICE_URL=http://ai-service:8000
+      - JWT_SECRET=talentpilot_super_secret_key_change_me_in_prod
+    depends_on:
+      - ai-service
+
+  frontend:
+    image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-frontend:latest
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus

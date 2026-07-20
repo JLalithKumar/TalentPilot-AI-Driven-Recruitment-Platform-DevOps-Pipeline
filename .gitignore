@@ -1,0 +1,55 @@
+# IDE & OS Files
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Java & Maven
+target/
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Node & React
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python & AI Service
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# DevOps & Terraform Local State
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+kubeconfig*
+*.yaml.bak
+
+# Secrets & Environment Files
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# Temporary Test Files
+test_api.py
