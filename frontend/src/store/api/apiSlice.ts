@@ -4,7 +4,7 @@ import { RootState } from '../index';
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:8081/api/v1`,
+    baseUrl: '/api/v1',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {

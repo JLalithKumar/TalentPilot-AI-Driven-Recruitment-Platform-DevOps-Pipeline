@@ -1,0 +1,11 @@
+{
+    "InstanceIds": ["i-0f8ade6523273cdfd"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "docker rm -f argocd-ui-server || true",
+            "docker restart backend",
+            "docker restart frontend"
+        ]
+    }
+}

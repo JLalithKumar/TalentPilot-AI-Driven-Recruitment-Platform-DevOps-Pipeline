@@ -42,8 +42,7 @@ export const Register = () => {
     setError('');
     
     try {
-      const getApiHost = () => typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-      const response = await fetch(`http://${getApiHost()}:8081/api/v1/auth/register`, {
+      const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
