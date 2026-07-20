@@ -1,0 +1,14 @@
+{
+    "InstanceIds": ["i-0f8ade6523273cdfd"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "cd /home/ubuntu && docker compose up -d",
+            "python3 -c \"open('/tmp/nginx_default.conf', 'w').write('''server {\n    listen 80;\n    server_name _;\n\n    location / {\n        root /usr/share/nginx/html;\n        index index.html index.htm;\n        try_files \\\\$uri \\\\$uri/ /index.html;\n    }\n\n    location /api/ {\n        proxy_pass http://backend:8080/api/;\n        proxy_set_header Host \\\\$host;\n        proxy_set_header X-Real-IP \\\\$remote_addr;\n        proxy_set_header X-Forwarded-For \\\\$proxy_add_x_forwarded_for;\n    }\n}\n''')\"",
+            "docker cp /tmp/nginx_default.conf frontend:/etc/nginx/conf.d/default.conf",
+            "docker exec frontend sed -i 's/http:\\/\\/[^:]*:8081\\/api\\/v1/\\/api\\/v1/g' /usr/share/nginx/html/assets/*.js || true",
+            "docker exec frontend sed -i 's/:8081\\/api\\/v1/\\/api\\/v1/g' /usr/share/nginx/html/assets/*.js || true",
+            "docker exec frontend nginx -s reload"
+        ]
+    }
+}

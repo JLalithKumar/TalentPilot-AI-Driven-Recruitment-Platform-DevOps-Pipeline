@@ -1,0 +1,12 @@
+{
+    "InstanceIds": ["i-0f8ade6523273cdfd"],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "python3 -c \"import base64; config = base64.b64decode('c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIF87CgogICAgbG9jYXRpb24gLyB7CiAgICAgICAgcm9vdCAvdXNyL3NoYXJlL25naW54L2h0bWw7CiAgICAgICAgaW5kZXggaW5kZXguaHRtbCBpbmRleC5odG07CiAgICAgICAgdHJ5X2ZpbGVzICR1cmkgJHVyaS8gL2luZGV4Lmh0bWw7CiAgICB9CgogICAgbG9jYXRpb24gL2FwaS8gewogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmQ6ODA4MDsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIEhvc3QgJGhvc3Q7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLVJlYWwtSVAgJHJlbW90ZV9hZGRyOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1Gb3J3YXJkZWQtRm9yICRwcm94eV9hZGRfeF9mb3J3YXJkZWRfZm9yOwogICAgfQp9Cg=='); open('/tmp/default.conf', 'wb').write(config)\"",
+            "docker cp /tmp/default.conf frontend:/etc/nginx/conf.d/default.conf",
+            "docker exec frontend nginx -t",
+            "docker exec frontend nginx -s reload"
+        ]
+    }
+}
