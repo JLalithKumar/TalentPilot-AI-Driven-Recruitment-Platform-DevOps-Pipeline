@@ -10,7 +10,7 @@ const useCompany = (token: string | null) => {
   const [company, setCompany] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  const fetchCompany = React.useCallback(() => {
     if (!token) return;
     fetch(`/api/v1/company/my`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -20,6 +20,10 @@ const useCompany = (token: string | null) => {
       .catch(() => setLoading(false));
   }, [token]);
 
+  React.useEffect(() => {
+    fetchCompany();
+  }, [fetchCompany]);
+
   const updateCompany = async (data: any) => {
     const res = await fetch(`/api/v1/company/my`, {
       method: 'PUT',
@@ -27,13 +31,18 @@ const useCompany = (token: string | null) => {
       body: JSON.stringify(data)
     });
     if (res.ok) {
-      const result = await res.json();
-      setCompany(result);
+      setCompany((prev: any) => ({
+        ...prev,
+        name: data.name || prev?.name,
+        description: data.description,
+        website: data.website
+      }));
+      fetchCompany();
     }
     return res.ok;
   };
 
-  return { company, loading, updateCompany, setCompany };
+  return { company, loading, updateCompany, setCompany, refetchCompany: fetchCompany };
 };
 
 export const RecruiterDashboard = () => {
