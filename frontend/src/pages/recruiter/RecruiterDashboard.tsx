@@ -26,7 +26,10 @@ const useCompany = (token: string | null) => {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (res.ok) setCompany({ ...company, ...data });
+    if (res.ok) {
+      const result = await res.json();
+      setCompany((prev: any) => ({ ...prev, ...result, name: data.name || prev?.name, description: data.description, website: data.website }));
+    }
     return res.ok;
   };
 
