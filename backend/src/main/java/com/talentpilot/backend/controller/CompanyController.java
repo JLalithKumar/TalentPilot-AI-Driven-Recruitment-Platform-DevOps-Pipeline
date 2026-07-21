@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -27,14 +28,7 @@ public class CompanyController {
                         .name(recruiter.getFirstName() + "'s Company")
                         .recruiter(recruiter)
                         .build()));
-        return ResponseEntity.ok(Map.of(
-                "id", company.getId(),
-                "name", company.getName(),
-                "description", company.getDescription() != null ? company.getDescription() : "",
-                "website", company.getWebsite() != null ? company.getWebsite() : "",
-                "recruiterName", recruiter.getFirstName() + " " + recruiter.getLastName(),
-                "recruiterEmail", recruiter.getEmail()
-        ));
+        return ResponseEntity.ok(buildCompanyResponse(company, recruiter));
     }
 
     @PutMapping("/my")
@@ -57,13 +51,19 @@ public class CompanyController {
         }
 
         Company saved = companyRepository.save(company);
-        return ResponseEntity.ok(Map.of(
-                "id", saved.getId(),
-                "name", saved.getName(),
-                "description", saved.getDescription() != null ? saved.getDescription() : "",
-                "website", saved.getWebsite() != null ? saved.getWebsite() : "",
-                "recruiterName", recruiter.getFirstName() + " " + recruiter.getLastName(),
-                "recruiterEmail", recruiter.getEmail()
-        ));
+        return ResponseEntity.ok(buildCompanyResponse(saved, recruiter));
+    }
+
+    private Map<String, Object> buildCompanyResponse(Company company, User recruiter) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", company.getId());
+        map.put("name", company.getName() != null ? company.getName() : "");
+        map.put("description", company.getDescription() != null ? company.getDescription() : "");
+        map.put("website", company.getWebsite() != null ? company.getWebsite() : "");
+        String fullName = (recruiter.getFirstName() != null ? recruiter.getFirstName() : "") +
+                (recruiter.getLastName() != null ? " " + recruiter.getLastName() : "");
+        map.put("recruiterName", fullName.trim());
+        map.put("recruiterEmail", recruiter.getEmail() != null ? recruiter.getEmail() : "");
+        return map;
     }
 }
