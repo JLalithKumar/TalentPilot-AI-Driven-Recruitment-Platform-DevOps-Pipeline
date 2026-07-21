@@ -16,6 +16,7 @@ public class Company {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String website;
     private String logoUrl;
