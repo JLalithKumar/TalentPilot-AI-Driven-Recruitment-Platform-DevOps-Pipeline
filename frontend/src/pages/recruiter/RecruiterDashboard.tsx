@@ -28,7 +28,7 @@ const useCompany = (token: string | null) => {
     });
     if (res.ok) {
       const result = await res.json();
-      setCompany((prev: any) => ({ ...prev, ...result, name: data.name || prev?.name, description: data.description, website: data.website }));
+      setCompany(result);
     }
     return res.ok;
   };

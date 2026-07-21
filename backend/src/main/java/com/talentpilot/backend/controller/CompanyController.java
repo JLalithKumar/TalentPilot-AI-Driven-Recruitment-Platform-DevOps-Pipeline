@@ -46,23 +46,24 @@ public class CompanyController {
                         .recruiter(recruiter)
                         .build());
 
-        if (body.containsKey("name") && !body.get("name").isBlank()) {
+        if (body.get("name") != null && !body.get("name").isBlank()) {
             company.setName(body.get("name"));
         }
-        if (body.containsKey("description")) {
+        if (body.get("description") != null) {
             company.setDescription(body.get("description"));
         }
-        if (body.containsKey("website")) {
+        if (body.get("website") != null) {
             company.setWebsite(body.get("website"));
         }
 
         Company saved = companyRepository.save(company);
         return ResponseEntity.ok(Map.of(
-                "message", "Company updated successfully",
                 "id", saved.getId(),
                 "name", saved.getName(),
                 "description", saved.getDescription() != null ? saved.getDescription() : "",
-                "website", saved.getWebsite() != null ? saved.getWebsite() : ""
+                "website", saved.getWebsite() != null ? saved.getWebsite() : "",
+                "recruiterName", recruiter.getFirstName() + " " + recruiter.getLastName(),
+                "recruiterEmail", recruiter.getEmail()
         ));
     }
 }
