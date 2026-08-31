@@ -192,6 +192,8 @@ jobs:
             echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
           fi
           chmod 600 $HOME/.kube/config
+          kubectl config unset clusters.default.certificate-authority-data 2>/dev/null || true
+          kubectl config set-cluster default --insecure-skip-tls-verify=true
 
       - name: Update image tags in manifests
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
