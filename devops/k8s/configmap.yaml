@@ -10,7 +10,7 @@ data:
   SPRING_JPA_SHOW_SQL: "false"
 
   # S3 Storage
-  S3_BUCKET: "talentpilot-resumes-prod"
+  S3_BUCKET: "talentpilot-resumes-prod-v2"
   AWS_REGION: "us-east-1"
 
   # AI Service

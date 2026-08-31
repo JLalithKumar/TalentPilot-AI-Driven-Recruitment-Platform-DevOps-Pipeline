@@ -27,7 +27,7 @@ data:
   SPRING_JPA_SHOW_SQL: "false"
 
   # S3 Storage
-  S3_BUCKET: "talentpilot-resumes-prod"
+  S3_BUCKET: "talentpilot-resumes-prod-v2"
   AWS_REGION: "us-east-1"
 
   # AI Service
@@ -63,7 +63,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-backend:latest
+          image: ghcr.io/jlalithkumar/talent-pilot-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -128,7 +128,7 @@ spec:
     spec:
       containers:
         - name: ai-service
-          image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-ai-service:latest
+          image: ghcr.io/jlalithkumar/talent-pilot-ai-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -174,7 +174,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-frontend:latest
+          image: ghcr.io/jlalithkumar/talent-pilot-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

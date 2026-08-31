@@ -1,6 +1,6 @@
 # ── S3 — Resume Storage (replaces MinIO in production) ────────
 resource "aws_s3_bucket" "resumes" {
-  bucket = "${var.project_name}-resumes-${var.environment}"
+  bucket = "${var.project_name}-resumes-${var.environment}-v2"
   tags   = { Name = "${var.project_name}-resumes" }
 }
 
@@ -51,7 +51,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "resumes" {
 
 # ── S3 — Terraform State Bucket (bootstrapping) ───────────────
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "${var.project_name}-terraform-state"
+  bucket = "${var.project_name}-terraform-state-v2"
   tags   = { Name = "${var.project_name}-tf-state" }
 }
 
