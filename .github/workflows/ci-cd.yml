@@ -205,7 +205,6 @@ jobs:
         run: |
           kubectl apply -f devops/k8s/setup.yaml
           kubectl apply -f devops/k8s/configmap.yaml
-          kubectl apply -f devops/k8s/databases/
           kubectl apply -f devops/k8s/services/
           kubectl apply -f devops/k8s/ingress.yaml
           kubectl apply -f devops/k8s/network-policy.yaml
