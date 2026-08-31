@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 095695999221.dkr.ecr.us-east-1.amazonaws.com/talentpilot-backend:latest
+          image: ghcr.io/jlalithkumar/talent-pilot-backend:latest
           imagePullPolicy: Always
           ports:
             - name: http

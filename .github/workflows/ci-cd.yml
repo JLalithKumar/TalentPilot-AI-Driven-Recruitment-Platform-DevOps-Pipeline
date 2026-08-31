@@ -186,13 +186,16 @@ jobs:
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          if echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > /tmp/kube.tmp 2>/dev/null && grep -q "apiVersion" /tmp/kube.tmp; then
+            mv /tmp/kube.tmp $HOME/.kube/config
+          else
+            echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          fi
           chmod 600 $HOME/.kube/config
 
       - name: Update image tags in manifests
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
-          sed -i "s|YOUR_DOCKERHUB_USERNAME|${{ secrets.DOCKERHUB_USERNAME }}|g" devops/k8s/services/*.yaml
           sed -i "s|:latest|:${{ github.sha }}|g" devops/k8s/services/*.yaml
 
       - name: Apply Kubernetes manifests
