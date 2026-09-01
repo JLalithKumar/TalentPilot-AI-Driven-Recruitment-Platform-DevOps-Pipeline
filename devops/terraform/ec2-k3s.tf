@@ -92,7 +92,7 @@ resource "aws_instance" "k3s_node" {
     systemctl restart docker
 
     # 6. Install K3s (Lightweight Kubernetes) using Docker runtime
-    curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 644
+    curl -sfL https://get.k3s.io | sh -s - --docker --write-kubeconfig-mode 644 --tls-san $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
 
     # 7. Export Kubeconfig for easy access
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
