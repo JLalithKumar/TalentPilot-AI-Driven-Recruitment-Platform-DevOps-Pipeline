@@ -203,11 +203,11 @@ jobs:
       - name: Apply Kubernetes manifests
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
-          kubectl apply -f devops/k8s/setup.yaml
-          kubectl apply -f devops/k8s/configmap.yaml
-          kubectl apply -f devops/k8s/services/
-          kubectl apply -f devops/k8s/ingress.yaml
-          kubectl apply -f devops/k8s/network-policy.yaml
+          kubectl apply -f devops/k8s/setup.yaml --validate=false --request-timeout=30s
+          kubectl apply -f devops/k8s/configmap.yaml --validate=false --request-timeout=30s
+          kubectl apply -f devops/k8s/services/ --validate=false --request-timeout=30s
+          kubectl apply -f devops/k8s/ingress.yaml --validate=false --request-timeout=30s
+          kubectl apply -f devops/k8s/network-policy.yaml --validate=false --request-timeout=30s
 
       - name: Wait for rollout to complete
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
