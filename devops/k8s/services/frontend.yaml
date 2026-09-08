@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/jlalithkumar/talent-pilot-frontend:latest
+          image: ghcr.io/jlalithkumar/talentpilot-ai-driven-recruitment-platform-devops-pipeline-frontend:latest
           imagePullPolicy: Always
           ports:
             - name: http

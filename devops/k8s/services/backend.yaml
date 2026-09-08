@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ghcr.io/jlalithkumar/talent-pilot-backend:latest
+          image: ghcr.io/jlalithkumar/talentpilot-ai-driven-recruitment-platform-devops-pipeline-backend:latest
           imagePullPolicy: Always
           ports:
             - name: http

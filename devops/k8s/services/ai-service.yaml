@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: ai-service
-          image: ghcr.io/jlalithkumar/talent-pilot-ai-service:latest
+          image: ghcr.io/jlalithkumar/talentpilot-ai-driven-recruitment-platform-devops-pipeline-ai-service:latest
           imagePullPolicy: Always
           ports:
             - name: http
