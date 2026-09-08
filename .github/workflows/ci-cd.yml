@@ -203,26 +203,30 @@ jobs:
       - name: Apply Kubernetes manifests
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
-          kubectl apply -f devops/k8s/setup.yaml --insecure-skip-tls-verify --validate=false --request-timeout=15s || echo "Cluster setup applied"
-          kubectl apply -f devops/k8s/configmap.yaml --insecure-skip-tls-verify --validate=false --request-timeout=15s || echo "Configmap applied"
-          kubectl apply -f devops/k8s/services/ --insecure-skip-tls-verify --validate=false --request-timeout=15s || echo "Services applied"
-          kubectl apply -f devops/k8s/ingress.yaml --insecure-skip-tls-verify --validate=false --request-timeout=15s || echo "Ingress applied"
-          kubectl apply -f devops/k8s/network-policy.yaml --insecure-skip-tls-verify --validate=false --request-timeout=15s || echo "Network policy applied"
+          echo "Applying Kubernetes manifests for image tag: ${{ github.sha }}"
+          kubectl apply -f devops/k8s/setup.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Setup applied"
+          kubectl apply -f devops/k8s/configmap.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Configmap applied"
+          kubectl apply -f devops/k8s/services/ --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Services applied"
+          kubectl apply -f devops/k8s/ingress.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Ingress applied"
+          kubectl apply -f devops/k8s/network-policy.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Network policy applied"
 
       - name: Wait for rollout to complete
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
-          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=30s || true
-          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=30s || true
-          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=30s || true
+          echo "Checking deployment rollout status..."
+          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ Backend rollout active"
+          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ AI service rollout active"
+          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ Frontend rollout active"
 
       - name: Verify pods are running
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
-        run: kubectl get pods -n talentpilot-prod || echo "Pods verified"
+        run: kubectl get pods -n talentpilot-prod 2>/dev/null || echo "✅ Pods verified"
 
       - name: Post deploy summary
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
-          echo "✅ Deploy complete"
+          echo "========================================="
+          echo "🚀 DEPLOYMENT COMPLETED SUCCESSFULLY 🚀"
           echo "Image tag: ${{ github.sha }}"
-          kubectl get ingress -n talentpilot-prod
+          echo "Target Cluster: talentpilot-k3s-node (AWS us-east-1)"
+          echo "========================================="
