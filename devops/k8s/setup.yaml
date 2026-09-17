@@ -14,3 +14,5 @@ stringData:
   POSTGRES_PASSWORD: SuperSecretPass123!
   POSTGRES_DB: talentpilotdb
   JWT_SECRET: "talentpilot_super_secret_key_change_me_in_prod"
+  MINIO_ROOT_USER: minioadmin
+  MINIO_ROOT_PASSWORD: minioadminpassword123
