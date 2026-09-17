@@ -44,7 +44,7 @@ spec:
               memory: "256Mi"
             limits:
               cpu: "500m"
-              memory: "400Mi"
+              memory: "600Mi"
           # Environment — non-secrets from ConfigMap
           envFrom:
             - configMapRef:
@@ -81,18 +81,18 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
-            initialDelaySeconds: 45
+            initialDelaySeconds: 60
             periodSeconds: 10
-            failureThreshold: 5
+            failureThreshold: 10
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8080
-            initialDelaySeconds: 60
+            initialDelaySeconds: 90
             periodSeconds: 15
-            failureThreshold: 3
+            failureThreshold: 6
 ---
-# Horizontal Pod Autoscaler — scale backend between 2 and 8 replicas
+# Horizontal Pod Autoscaler — scale backend between 1 and 4 replicas
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -103,8 +103,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: backend
-  minReplicas: 2
-  maxReplicas: 8
+  minReplicas: 1
+  maxReplicas: 4
   metrics:
     - type: Resource
       resource:
