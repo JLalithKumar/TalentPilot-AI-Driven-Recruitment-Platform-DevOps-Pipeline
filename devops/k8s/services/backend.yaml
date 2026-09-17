@@ -81,10 +81,9 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 45
             periodSeconds: 10
             failureThreshold: 5
-          # Liveness probe — restart pod if app becomes unresponsive
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
