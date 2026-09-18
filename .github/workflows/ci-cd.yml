@@ -193,7 +193,6 @@ jobs:
           fi
           chmod 600 $HOME/.kube/config
           kubectl config set-cluster default --insecure-skip-tls-verify=true 2>/dev/null || true
-          kubectl config set-cluster default --server=https://44.197.216.87:6443 2>/dev/null || true
 
       - name: Update image tags in manifests
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
@@ -204,23 +203,23 @@ jobs:
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
           echo "Applying Kubernetes manifests for image tag: ${{ github.sha }}"
-          kubectl apply -f devops/k8s/setup.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Setup applied"
-          kubectl apply -f devops/k8s/configmap.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Configmap applied"
-          kubectl apply -f devops/k8s/services/ --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Services applied"
-          kubectl apply -f devops/k8s/ingress.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Ingress applied"
-          kubectl apply -f devops/k8s/network-policy.yaml --insecure-skip-tls-verify --validate=false --request-timeout=5s 2>/dev/null || echo "✅ Network policy applied"
+          kubectl apply -f devops/k8s/setup.yaml --insecure-skip-tls-verify --validate=false
+          kubectl apply -f devops/k8s/configmap.yaml --insecure-skip-tls-verify --validate=false
+          kubectl apply -f devops/k8s/services/ --insecure-skip-tls-verify --validate=false
+          kubectl apply -f devops/k8s/ingress.yaml --insecure-skip-tls-verify --validate=false
+          kubectl apply -f devops/k8s/network-policy.yaml --insecure-skip-tls-verify --validate=false
 
       - name: Wait for rollout to complete
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
           echo "Checking deployment rollout status..."
-          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ Backend rollout active"
-          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ AI service rollout active"
-          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=10s 2>/dev/null || echo "✅ Frontend rollout active"
+          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=120s
+          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=120s
+          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=120s
 
       - name: Verify pods are running
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
-        run: kubectl get pods -n talentpilot-prod 2>/dev/null || echo "✅ Pods verified"
+        run: kubectl get pods -n talentpilot-prod -o wide
 
       - name: Post deploy summary
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'

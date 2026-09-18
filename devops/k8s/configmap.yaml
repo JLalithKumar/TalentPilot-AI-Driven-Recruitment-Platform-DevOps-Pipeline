@@ -5,7 +5,7 @@ metadata:
   namespace: talentpilot-prod
 data:
   # Database
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://talentpilot-postgres.c6bwcwwsy46w.us-east-1.rds.amazonaws.com:5432/talentpilotdb"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://talentpilot-postgres.caz42usggo0m.us-east-1.rds.amazonaws.com:5432/talentpilotdb"
   SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
   SPRING_JPA_SHOW_SQL: "false"
 
