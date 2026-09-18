@@ -213,9 +213,9 @@ jobs:
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
         run: |
           echo "Checking deployment rollout status..."
-          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=120s
-          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=120s
-          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=120s
+          kubectl rollout status deployment/backend -n talentpilot-prod --timeout=300s
+          kubectl rollout status deployment/ai-service -n talentpilot-prod --timeout=300s
+          kubectl rollout status deployment/frontend -n talentpilot-prod --timeout=300s
 
       - name: Verify pods are running
         if: steps.check_kubeconfig.outputs.has_kubeconfig == 'true'
